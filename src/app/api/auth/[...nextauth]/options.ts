@@ -18,22 +18,22 @@ export const authOptions: NextAuthOptions = {
         try {
           const user = await UserModel.findOne({
             $or: [
-              { email: credentials.indetifier },
-              { username: credentials.indetifier },
+              { email: credentials.identifier },
+              { username: credentials.identifier },
             ],
           });
 
           if (!user) {
-            throw Error("No user find with this email");
+            throw Error("No user found with this email or username");
           }
 
           if (!user.isVerified) {
-            throw Error("Please verify your email before login");
+            throw Error("Please verify your email before logging in");
           }
 
           const isPasswordCorrect = await bcrypt.compare(
-            user.password,
-            credentials.password
+            credentials.password,
+            user.password
           );
 
           if (isPasswordCorrect) {
@@ -42,9 +42,37 @@ export const authOptions: NextAuthOptions = {
             throw Error("Incorrect password");
           }
         } catch (err: any) {
-          throw new Error(err);
+          throw new Error(err.message);
         }
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token._id = user._id?.toString();
+        token.isVerified = user.isVerified;
+        token.isAcceptingMessages = user.isAcceptingMessages;
+        token.username = user.username;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (token) {
+        session.user._id = token.id;
+        session.user.isVerified = token.isVerified;
+        session.user.isAcceptingMessages = token.isAcceptingMessages;
+        session.user.username = token.username;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/sign-in",
+  },
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXT_AUTH_SECRET,
 };

@@ -1,63 +1,68 @@
 import { sendVerificationEmail } from "@/helper/sendVerificationEmail";
 import connectDB from "@/lib/connectDB";
 import UserModel from "@/models/user";
-import { bcrypt } from "bcrypt";
+import bcrypt from "bcrypt";
+import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request) {
   await connectDB();
 
   try {
     const { username, email, password } = await request.json();
-    const existingUserVerifiedByEmail = await UserModel.findOne({
+    const existingUserVerifiedByUsername = await UserModel.findOne({
       username,
       isVerified: true,
     });
 
-    if (existingUserVerifiedByEmail) {
-      return Response.json(
+    if (existingUserVerifiedByUsername) {
+      return NextResponse.json(
         {
-          succcess: false,
+          success: false,
           message: "Username is not available please try another one",
         },
         { status: 400 }
       );
     }
+
     const existingUserByEmail = await UserModel.findOne({ email });
     const verifyCode = Math.floor(100000 + Math.random() * 9000000).toString();
+
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
-        return Response.json(
+        return NextResponse.json(
           { success: false, message: "User already exists with this email" },
           { status: 400 }
         );
       } else {
-        const hashedPasword = await bcrypt.hash(password, 10);
-        existingUserByEmail.password = hashedPasword;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        existingUserByEmail.password = hashedPassword;
         existingUserByEmail.verifyCode = verifyCode;
-        existingUserByEmail.veryifyCodeExpiry = new Date(Date.now() + 3600000);
+        existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000);
         await existingUserByEmail.save();
+
+        return NextResponse.json(
+          {
+            success: true,
+            message: "User registered successfully please verify your email",
+          },
+          { status: 201 }
+        );
       }
-      return Response.json(
-        {
-          success: false,
-          message: " Username is not available please try another one",
-        },
-        { status: 400 }
-      );
     } else {
-      const hashedPasword = await bcrypt.has(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
       const expiryDate = new Date();
       expiryDate.setHours(expiryDate.getHours() + 1);
 
       const newUser = new UserModel({
         username,
         email,
-        password: hashedPasword,
+        password: hashedPassword,
         verifyCode,
-        veryifyCodeExpiry: expiryDate,
+        verifyCodeExpiry: expiryDate,
         isAcceptMessage: true,
         messages: [],
       });
+
       await newUser.save();
     }
 
@@ -68,13 +73,13 @@ export async function POST(request: Request) {
     );
 
     if (!emailResponse.success) {
-      return Response.json(
+      return NextResponse.json(
         { success: false, message: emailResponse.message },
         { status: 500 }
       );
     }
 
-    return Response.json(
+    return NextResponse.json(
       {
         success: true,
         message: "User registered successfully please verify your email",
@@ -82,8 +87,8 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error in regestering user", error);
-    return Response.json(
+    console.error("Error in registering user", error);
+    return NextResponse.json(
       {
         success: false,
         message: "Failed to register user",
