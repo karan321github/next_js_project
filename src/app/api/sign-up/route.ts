@@ -4,7 +4,7 @@ import UserModel from "@/models/user";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 
-export async function POST(request) {
+export async function POST(request : Request) {
   await connectDB();
 
   try {
@@ -37,7 +37,7 @@ export async function POST(request) {
         const hashedPassword = await bcrypt.hash(password, 10);
         existingUserByEmail.password = hashedPassword;
         existingUserByEmail.verifyCode = verifyCode;
-        existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000);
+        existingUserByEmail.veryifyCodeExpiry = new Date(Date.now() + 3600000);
         await existingUserByEmail.save();
 
         return NextResponse.json(
