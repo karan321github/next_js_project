@@ -13,8 +13,17 @@ export async function sendVerificationEmail(
       from: "Acme <onboarding@resend.dev>",
       to: email,
       subject: "Mystery message",
-      react: verificationEmail({username , otp: verifycode}),
+      react: verificationEmail({ username, otp: verifycode }),
     });
+
+    const response = await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>",
+      to: email,
+      subject: "Mystery message",
+      react: verificationEmail({ username, otp: verifycode }),
+    });
+    console.log("Email sent response:", response);
+
     return { success: true, message: "verification email sent successfully" };
   } catch (emailError) {
     console.error("error in sending Verification email", emailError);

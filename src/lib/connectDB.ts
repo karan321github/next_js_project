@@ -1,9 +1,7 @@
 import mongoose from "mongoose";
-import something from 'somewhere';
 
 type ConnectionObject = {
   isConnected?: Number;
-  
 };
 
 const connection: ConnectionObject = {};
@@ -15,9 +13,13 @@ async function connectDB(): Promise<void> {
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGO_URI || "", {});
+    const db = await mongoose.connect(
+      "mongodb+srv://ks867850:Singh8750@cluster0.glvex.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" ||
+        "",
+      {}
+    );
     connection.isConnected = db.connections[0].readyState;
-    console.log("Database connected successfuly");
+    console.log("Database connected successfully");
   } catch (error) {
     console.log("MongoDB error", error);
     process.exit(1);
