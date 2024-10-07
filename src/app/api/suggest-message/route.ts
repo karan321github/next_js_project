@@ -2,8 +2,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
 
 const openai = createOpenAI({
-  apiKey:
-    "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", // It's a good practice to use environment variables for API keys
+  apiKey: process.env.OPENAI_API_KEY // It's a good practice to use environment variables for API keys
 });
 
 export const POST = async (request: Request) => {
