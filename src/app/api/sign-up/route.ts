@@ -4,11 +4,13 @@ import UserModel from "@/models/user";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 
-export async function POST(request : Request) {
+export async function POST(request: Request) {
   await connectDB();
 
   try {
+    //step 1 take user details from req
     const { username, email, password } = await request.json();
+    //step - 2 check existingUser with username
     const existingUserVerifiedByUsername = await UserModel.findOne({
       username,
       isVerified: true,
@@ -23,10 +25,11 @@ export async function POST(request : Request) {
         { status: 400 }
       );
     }
-
+    //step - 2 check existingUser with email
     const existingUserByEmail = await UserModel.findOne({ email });
+    //make verifycode
     const verifyCode = Math.floor(100000 + Math.random() * 9000000).toString();
-
+    //step -3 check if user is verified or not
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
         return NextResponse.json(
@@ -34,10 +37,11 @@ export async function POST(request : Request) {
           { status: 400 }
         );
       } else {
+        //step-4 if user is not exist then
         const hashedPassword = await bcrypt.hash(password, 10);
         existingUserByEmail.password = hashedPassword;
         existingUserByEmail.verifyCode = verifyCode;
-        existingUserByEmail.veryifyCodeExpiry = new Date(Date.now() + 3600000);
+        existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000);
         await existingUserByEmail.save();
 
         return NextResponse.json(
@@ -52,7 +56,6 @@ export async function POST(request : Request) {
       const hashedPassword = await bcrypt.hash(password, 10);
       const expiryDate = new Date();
       expiryDate.setHours(expiryDate.getHours() + 1);
-
       const newUser = new UserModel({
         username,
         email,
