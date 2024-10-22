@@ -42,9 +42,11 @@ const Page = () => {
   });
 
   useEffect(() => {
+    console.log("inside checking username useEffect", setIsCheckingUsername);
     const checkUsername = async () => {
       if (username) {
         setIsCheckingUsername(true);
+        console.log(setIsCheckingUsername);
         setUsernameMessage("");
         try {
           const res = await axios.get(
