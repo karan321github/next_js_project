@@ -115,6 +115,7 @@ const Dashboard = () => {
   };
 
   const { username } = session?.user as User;
+  console.log(session);
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/u/${username}`;
 
