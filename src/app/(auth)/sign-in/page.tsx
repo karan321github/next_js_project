@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { signInValidation } from "@/schemas/signInSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Session } from "inspector";
 import { Link, Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -38,6 +39,7 @@ const SignIn = () => {
       identifier: data.identifier,
       password: data.password,
     });
+    localStorage.setItem("session", result<Session>);
     console.log("next auth sign-in response", result);
 
     if (result?.error) {
