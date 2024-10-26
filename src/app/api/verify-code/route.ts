@@ -1,3 +1,4 @@
+import { sendSuccessVerification } from "@/helper/sendVerificationEmail";
 import connectDB from "@/lib/connectDB";
 import UserModel from "@/models/user";
 
@@ -7,6 +8,8 @@ export async function POST(request: Request) {
     const { userName, code } = await request.json();
     const decodedUsername = decodeURIComponent(userName);
     const user = await UserModel.findOne({ username: decodedUsername });
+    const email = user?.email;
+    console.log(email);
 
     if (!user) {
       return Response.json(
@@ -23,7 +26,7 @@ export async function POST(request: Request) {
     if (isValidCode && isCodeNotExpire) {
       user.isVerified = true;
       await user.save();
-
+      await sendSuccessVerification(userName, email);
       return Response.json(
         {
           success: true,
@@ -47,7 +50,7 @@ export async function POST(request: Request) {
             "Verify code has been expired please signup again to get a new  code",
         },
         { status: 405 }
-      )
+      );
     }
   } catch (error) {
     console.error(error);

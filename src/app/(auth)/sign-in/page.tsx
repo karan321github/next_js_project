@@ -13,7 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 import { signInValidation } from "@/schemas/signInSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Session } from "inspector";
-import { Link, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -39,7 +40,7 @@ const SignIn = () => {
       identifier: data.identifier,
       password: data.password,
     });
-    localStorage.setItem("session", result<Session>);
+
     console.log("next auth sign-in response", result);
 
     if (result?.error) {
@@ -111,12 +112,12 @@ const SignIn = () => {
           </form>
         </Form>
         <div className="text-center mt-4">
-          <p>Do not have an account?</p>
+          <p>Don't have an account?</p>
           <Link
             href={"/sign-up"}
             className="text-blue-600  hover:text-blue-800"
           >
-            Sign in
+            Sign up
           </Link>
         </div>
       </div>

@@ -1,8 +1,12 @@
-"use client";
-
 import { X } from "lucide-react";
 import { Button } from "./ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,33 +18,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Message } from "@/models/user";
 import axios from "axios";
-import { ApiResponse } from "@/types/ApiResponse";
 import { useToast } from "@/hooks/use-toast";
 
 type MessageCardProp = {
-  message: Message;
+  message: { _id: string; text: string }; // Adjusted to reflect the actual message structure
   onMessageDelete: (messageId: string) => void;
 };
 
 const MessageCard = ({ message, onMessageDelete }: MessageCardProp) => {
   const { toast } = useToast();
+
   const handleDeleteConfirm = async () => {
     try {
-      // Assert that _id is of type string
-      const messageId = message._id as string;
-
-      const response = await axios.delete<ApiResponse>(
-        `/api/delete-message/${messageId}`
-      );
-
-      toast({
-        title: response.data.message.toString(), // Ensuring it's a primitive string
-      });
-
-      onMessageDelete(messageId);
-    } catch (error) {
+      const response = await axios.delete(`/api/delete-message/${message._id}`);
+      toast({ title: response.data.message });
+      onMessageDelete(message._id);
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete the message",
@@ -48,34 +42,41 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProp) => {
       });
     }
   };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Card Title</CardTitle>
+    <Card className="relative border shadow-sm hover:shadow-md transition-shadow">
+      <CardHeader className="flex justify-between items-center">
+        <CardTitle className="text-lg font-medium">{message}</CardTitle>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 text-red-500"
+            >
               <X className="w-5 h-5" />
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={handleDeleteConfirm}>
-                Continue
+                Delete
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <CardDescription>Card Description</CardDescription>
       </CardHeader>
+      <CardContent className="text-gray-700">{message.text}</CardContent>
+      <CardDescription className="text-xs text-gray-500">
+        Sent on {new Date().toLocaleDateString()}
+      </CardDescription>
     </Card>
   );
 };

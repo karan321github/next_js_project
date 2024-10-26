@@ -13,11 +13,9 @@ async function connectDB(): Promise<void> {
   }
 
   try {
-    const db = await mongoose.connect(
-      "mongodb+srv://ks867850:Singh8750@cluster0.glvex.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" ||
-        "",
-      {}
-    );
+    console.log("Mongo URI:", process.env.MONGO_URI);
+    const db = await mongoose.connect(process.env.MONGO_URI || "", {});
+
     connection.isConnected = db.connections[0].readyState;
     console.log("Database connected successfully");
   } catch (error) {
