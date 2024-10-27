@@ -1,5 +1,8 @@
 "use client";
 
+import React from "react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Carousel,
@@ -8,80 +11,152 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import { MessageSquare, Send, Lock } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
 
 const messages = [
   {
-    title: "Message from Mystery Guest",
-    content: "Hi, how are you doing today?",
+    title: "Anonymous Admirer",
+    content: "Your creativity inspires me every day!",
     received: "3 days ago",
   },
   {
-    title: "Message from Mystery Guest",
-    content: "I really liked your recent post",
+    title: "Secret Supporter",
+    content: "Thank you for being such a positive influence",
     received: "2 hours ago",
   },
   {
-    title: "Message from Mystery Guest",
-    content: "Do you have any book suggestions for me?",
+    title: "Mystery Friend",
+    content: "Your recent achievements are truly remarkable",
     received: "1 day ago",
   },
   {
-    title: "Message from Mystery Guest",
-    content: "What did you eat today?",
+    title: "Hidden Helper",
+    content: "Keep spreading joy wherever you go!",
     received: "1 day ago",
   },
 ];
 
+const features = [
+  {
+    icon: <MessageSquare className="w-12 h-12 mb-4 text-blue-400" />,
+    title: "Anonymous Messages",
+    description: "Share your thoughts freely without revealing your identity",
+  },
+  {
+    icon: <Lock className="w-12 h-12 mb-4 text-green-400" />,
+    title: "Secure & Private",
+    description: "Your privacy is our top priority with end-to-end protection",
+  },
+  {
+    icon: <Send className="w-12 h-12 mb-4 text-purple-400" />,
+    title: "Instant Delivery",
+    description: "Messages are delivered instantly to their recipients",
+  },
+];
+
+
 const HomePage = () => {
+  const { data: session } = useSession();
+
   return (
-    <>
-      <main className="h-full flex flex-col items-center justify-center px-4 md:px-24 py-12 bg-gradient-to-b from-gray-800 to-gray-900 text-white">
-        <section className="text-center mb-8 md:mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-gray-100 transition-all duration-300 hover:scale-105">
-            Dive into the World of Anonymous Conversation
-          </h1>
-          <p className="mt-4 text-lg md:text-xl text-gray-300 transition-opacity duration-200 hover:opacity-90">
-            Explore Mystery Message – Where your identity remains a secret
-          </p>
-        </section>
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
+      {/* Hero Section */}
+      <main className="flex-grow">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center mb-16">
+            <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-6 animate-fade-in">
+              Express Yourself Freely
+            </h1>
+            <p className="text-xl text-gray-300 mb-8">
+              Share your thoughts anonymously with anyone, anywhere
+            </p>
+            <div className="flex justify-center gap-4">
+              {session ? (
+                <Link href="/dashboard">
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                    View Messages
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/sign-in">
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                    Get Started
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
 
-        <Carousel
-          className="w-full max-w-lg rounded-lg overflow-hidden shadow-lg bg-gray-900"
-          plugins={[Autoplay({ delay: 2500 })]}
-        >
-          <CarouselContent>
-            {messages.map((message, index) => (
-              <CarouselItem key={index}>
-                <div className="p-4">
-                  <Card className="bg-gray-800 text-white rounded-lg shadow-md transform transition-transform duration-200 hover:scale-105">
-                    <CardHeader className="text-center text-xl font-bold border-b border-gray-600 py-2">
-                      {message.title}
-                    </CardHeader>
-                    <CardContent className="flex items-center justify-center p-6">
-                      <p className="text-lg md:text-2xl font-medium text-center">
-                        {message.content}
-                      </p>
-                    </CardContent>
-                    <div className="text-xs text-gray-400 text-center pb-4">
-                      Received {message.received}
-                    </div>
-                  </Card>
+          {/* Features Section */}
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="bg-gray-800 p-6 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:bg-gray-750"
+              >
+                <div className="text-center">
+                  {feature.icon}
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-400">{feature.description}</p>
                 </div>
-              </CarouselItem>
+              </div>
             ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </main>
-      <footer className="bg-gray-800 text-gray-300 text-center px-2 py-4 border-t border-gray-700">
-        <span className="hover:text-gray-200 transition-colors duration-200">
-          © 2024 Made by @karan
-        </span>
-      </footer>
+          </div>
 
-    </>
+          {/* Message Carousel */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-center text-white mb-8">
+              Recent Anonymous Messages
+            </h2>
+            <Carousel
+              className="max-w-2xl mx-auto"
+              plugins={[Autoplay({ delay: 3000 })]}
+            >
+              <CarouselContent>
+                {messages.map((message, index) => (
+                  <CarouselItem key={index}>
+                    <Card className="bg-gray-800 border border-gray-700 transform transition-all duration-300 hover:border-blue-500">
+                      <CardHeader className="text-lg font-semibold text-blue-400 border-b border-gray-700">
+                        {message.title}
+                      </CardHeader>
+                      <CardContent className="p-6">
+                        <p className="text-xl text-white mb-4">
+                          {message.content}
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          {message.received}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="text-white" />
+              <CarouselNext className="text-white" />
+            </Carousel>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-8 border-t border-gray-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <span className="text-lg font-semibold">Mystery Message</span>
+              <p className="text-sm">Express yourself freely and securely</p>
+            </div>
+            <div className="text-sm">
+              © 2024 Made by @karan - All rights reserved
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 
