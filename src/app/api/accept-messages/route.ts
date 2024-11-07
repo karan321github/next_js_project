@@ -55,3 +55,37 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET(request: Request) {
+  await connectDB();
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user) {
+    return Response.json(
+      { success: false, message: "Not Authenticated" },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const userId = new ObjectId(session.user._id);
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return Response.json(
+        { success: false, message: "User not found" },
+        { status: 404 }
+      );
+    }
+
+    return Response.json(
+      { success: true, isAcceptingMessage: user.isAcceptMessage },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return Response.json(
+      { success: false, message: "Error fetching data" },
+      { status: 500 }
+    );
+  }
+}

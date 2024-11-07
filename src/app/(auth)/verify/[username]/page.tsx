@@ -88,7 +88,7 @@ const VerifyAccount = () => {
                   </FormItem>
                 )}
               />
-              <Button className=" bg-gray-600 hover:bg-gray-500" type="submit">
+              <Button className=" bg-gray-600 hover:bg-gray-50   0" type="submit">
                 Submit
               </Button>
             </form>

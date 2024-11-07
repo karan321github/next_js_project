@@ -8,21 +8,21 @@ export async function POST(request: Request) {
     const { username, content } = await request.json();
     const user = await UserModel.findOne({ username });
     if (!user) {
-      return Response.json(
-        {
+      return new Response(
+        JSON.stringify({
           success: false,
           message: "User not found",
-        },
+        }),
         { status: 404 }
       );
     }
 
     if (!user.isAcceptMessage) {
-      return Response.json(
-        {
+      return new Response(
+        JSON.stringify({
           success: false,
           message: "User is not accepting messages",
-        },
+        }),
         { status: 403 }
       );
     }
@@ -30,13 +30,21 @@ export async function POST(request: Request) {
     const newMessage = { content, createdAt: new Date() };
     user.messages.push(newMessage as Message);
     await user.save();
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Message sent successfully",
+      }),
+      { status: 200 }
+    );
   } catch (error) {
     console.log("An unexpected error occurred:", error);
-    return Response.json(
-      {
+    return new Response(
+      JSON.stringify({
         success: false,
-        message: "Error in sending messages",
-      },
+        message: "Error in sending message",
+      }),
       { status: 400 }
     );
   }
