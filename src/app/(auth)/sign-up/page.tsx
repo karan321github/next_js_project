@@ -113,7 +113,7 @@ const Page = () => {
                         <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
                         <Input
                           placeholder="Choose your username"
-                          className="pl-1 0 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                          className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-blue-500 focus:border-blue-500"
                           {...field}
                           onChange={(e) => {
                             field.onChange(e);
