@@ -126,7 +126,7 @@ const Page = () => {
                       <div className="flex items-center mt-1">
                         <Loader2 className="animate-spin h-4 w-4 text-blue-400" />
                         <span className="ml-2 text-sm text-gray-400">
-                          Checking availability...
+                          Checking availability..
                         </span>
                       </div>
                     )}
