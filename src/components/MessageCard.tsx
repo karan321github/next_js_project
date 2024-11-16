@@ -21,28 +21,28 @@ import {
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 
+
 // Define a proper Message type
 interface Message {
   _id: string;
-  text: string;
+  text: string,
+  content: string;
   createdAt?: string;
 }
 
 interface MessageCardProps {
-  message: Message;
+  message: Message,
   onMessageDelete: (messageId: string) => void;
 }
 
 const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
   const { toast } = useToast();
-
   const handleDeleteConfirm = async () => {
     try {
       console.log("Deleting message with ID:", message._id);
       const response = await axios.delete(`/api/delete-message/${message._id}`);
 
       if (response.data.success) {
-        // Call the onMessageDelete callback to update the UI
         onMessageDelete(message._id);
 
         toast({
