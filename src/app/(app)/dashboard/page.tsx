@@ -167,7 +167,14 @@ const Dashboard = () => {
                   Your Profile Link
                 </h2>
                 <div className="flex items-center space-x-4">
+                  <label
+                    htmlFor="profile-url"
+                    className="sr-only"
+                  >
+                    Profile URL
+                  </label>
                   <input
+                    id="profile-url"
                     type="text"
                     value={profileUrl}
                     disabled
@@ -176,6 +183,7 @@ const Dashboard = () => {
                   <Button
                     onClick={copyToClipBoard}
                     className="bg-blue-600 hover:bg-blue-700 text-white"
+                    aria-label="Copy Profile URL"
                   >
                     <Copy className="w-5 h-5" />
                   </Button>
@@ -188,8 +196,12 @@ const Dashboard = () => {
           <div className="bg-gray-800 rounded-xl p-8 border border-gray-700">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-4">
+                <label htmlFor="accept-messages-toggle" className="sr-only">
+                  Accept Messages Toggle
+                </label>
                 <Switch
                   {...register("acceptMessages")}
+                  id="accept-messages-toggle"
                   checked={acceptMessages}
                   onCheckedChange={handleSwitchChange}
                   disabled={isSwitchLoading}
@@ -214,6 +226,7 @@ const Dashboard = () => {
                 variant="outline"
                 className="border-gray-600 text-stone hover:bg-gray-700"
                 disabled={isLoading}
+                aria-label="Refresh Messages"
               >
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin mr-2" />
