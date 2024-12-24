@@ -8,8 +8,6 @@ export async function POST(request: Request) {
     const { userName, code } = await request.json();
     const decodedUsername = decodeURIComponent(userName);
     const user = await UserModel.findOne({ username: decodedUsername });
-    const email = user?.email;
-    console.log(email);
 
     if (!user) {
       return Response.json(
@@ -21,12 +19,25 @@ export async function POST(request: Request) {
       );
     }
 
+    const email = user.email;
+    if (!email) {
+      return Response.json(
+        {
+          success: false,
+          message: "User email not found",
+        },
+        { status: 500 }
+      );
+    }
+
     const isValidCode = user.verifyCode === code;
     const isCodeNotExpire = new Date(user.verifyCodeExpiry) > new Date();
+
     if (isValidCode && isCodeNotExpire) {
       user.isVerified = true;
       await user.save();
-      await sendSuccessVerification(userName, email);
+
+      await sendSuccessVerification(userName, email); // Email is guaranteed to be defined here
       return Response.json(
         {
           success: true,
@@ -38,7 +49,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "Verify code does not matched",
+          message: "Verify code does not match",
         },
         { status: 405 }
       );
@@ -47,7 +58,7 @@ export async function POST(request: Request) {
         {
           success: false,
           message:
-            "Verify code has been expired please signup again to get a new  code",
+            "Verify code has expired. Please sign up again to get a new code",
         },
         { status: 405 }
       );

@@ -27,7 +27,7 @@ interface Message {
   _id: string;
   text: string,
   content: string;
-  createdAt?: string;
+  createdAt?: Date;
 }
 
 interface MessageCardProps {

@@ -45,7 +45,7 @@ const ProfilePage = () => {
         username,
         content,
       });
-
+    
       if (response.status === 200) {
         toast({
           title: "Message Sent",
@@ -53,7 +53,9 @@ const ProfilePage = () => {
         });
         setMessages("");
       }
-    } catch (error) {
+    } catch (err) {
+      const error = err as { response?: { status: number } }; // Type assertion
+    
       if (error.response?.status === 403) {
         toast({
           title: "Not Available",
@@ -70,6 +72,7 @@ const ProfilePage = () => {
     } finally {
       setIsLoading(false);
     }
+    
   };
 
   return (
