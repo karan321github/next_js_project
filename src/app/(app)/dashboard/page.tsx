@@ -25,6 +25,7 @@ import { Card, CardContent } from "@/components/ui/card";
 const Dashboard = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isClient , setIsClient] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
   const { toast } = useToast();
   const { data: session } = useSession();
@@ -45,7 +46,9 @@ const Dashboard = () => {
     );
   };
 
-  console.log("Message", messages[0]);
+  useEffect(() => {
+    setIsClient(true);
+  },[])
 
   const fetchAcceptMessage = useCallback(async () => {
     try {
@@ -132,8 +135,8 @@ const Dashboard = () => {
   }, [session, fetchAcceptMessage, fetchMessages]);
 
   const username = session?.user ? session.user.username : null;
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
-  const profileUrl = `${baseUrl}/u/${username}`;
+  const baseUrl = isClient ? `${window.location.protocol}//${window.location.host}` : "";
+  const profileUrl = isClient ? `${baseUrl}/u/${session?.user.username}` : "";
 
   const copyToClipBoard = () => {
     navigator.clipboard.writeText(profileUrl);
